@@ -1,0 +1,333 @@
+﻿@page "/"
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+@implements IDisposable
+
+<!-- NAV -->
+<nav class="navbar">
+    <a href="/" class="navbar-logo">
+        <svg class="logo-svg" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="30" r="26" stroke="#c9a84c" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/>
+            <line x1="30" y1="10" x2="30" y2="50" stroke="#c9a84c" stroke-width="2"/>
+            <line x1="20" y1="17" x2="40" y2="17" stroke="#c9a84c" stroke-width="2"/>
+            <circle cx="30" cy="11" r="3" stroke="#c9a84c" stroke-width="1.8" fill="none"/>
+            <path d="M30 50 Q20 46 18 38" stroke="#c9a84c" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M30 50 Q40 46 42 38" stroke="#c9a84c" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M20 17 Q14 20 16 28" stroke="#c9a84c" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-dasharray="2 2"/>
+            <path d="M40 17 Q46 20 44 28" stroke="#c9a84c" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-dasharray="2 2"/>
+        </svg>
+        <div class="logo-text">
+            <span class="logo-name">SAYAR MARİN</span>
+            <span class="logo-tagline">Yacht Repair & Painting</span>
+        </div>
+    </a>
+    <ul class="nav-links">
+        <li><a href="#about">@(_lang == "en" ? "About" : "Hakkımızda")</a></li>
+        <li><a href="#services">@(_lang == "en" ? "Services" : "Hizmetler")</a></li>
+        <li><a href="#gallery">@(_lang == "en" ? "Gallery" : "Galeri")</a></li>
+        <li><a href="#contact">@(_lang == "en" ? "Contact" : "İletişim")</a></li>
+    </ul>
+    <div class="nav-right">
+        <div class="lang-toggle">
+            <button class="lang-btn @(_lang == "en" ? "active" : "")" @onclick='() => SetLang("en")'>EN</button>
+            <button class="lang-btn @(_lang == "tr" ? "active" : "")" @onclick='() => SetLang("tr")'>TR</button>
+        </div>
+        <button class="btn-quote" @onclick="ScrollToContact">
+            @(_lang == "en" ? "Get Quote" : "Teklif Al")
+        </button>
+    </div>
+</nav>
+
+<!-- HERO SLIDER -->
+<section class="hero">
+    <div class="slides-container">
+        <div class="slide slide-1 @(_currentSlide == 0 ? "active" : "")"></div>
+        <div class="slide slide-2 @(_currentSlide == 1 ? "active" : "")"></div>
+        <div class="slide slide-3 @(_currentSlide == 2 ? "active" : "")"></div>
+        <div class="slide slide-4 @(_currentSlide == 3 ? "active" : "")"></div>
+    </div>
+
+    <button class="slide-arrow arrow-left" @onclick="PrevSlide">&#8592;</button>
+    <button class="slide-arrow arrow-right" @onclick="NextSlide">&#8594;</button>
+
+    <div class="hero-content">
+        <p class="hero-eyebrow">Marmaris, Turkey — Est. 2020</p>
+        <h1 class="hero-title">
+            @if (_lang == "en")
+            {
+                <span>Crafting <em>Excellence</em><br>on the Water</span>
+            }
+            else
+            {
+                <span>Denizde <em>Mükemmellik</em><br>Yaratıyoruz</span>
+            }
+        </h1>
+        <p class="hero-subtitle">
+            @(_lang == "en" ? "Yacht Painting & Repair Specialists — Marmaris, Turkey" : "Yat Boya & Onarım Uzmanları — Marmaris, Türkiye")
+        </p>
+        <div class="hero-buttons">
+            <a href="#services" class="btn-hero-primary">@(_lang == "en" ? "Our Services" : "Hizmetlerimiz")</a>
+            <a href="#contact" class="btn-hero-secondary">@(_lang == "en" ? "Contact Us" : "İletişime Geç")</a>
+        </div>
+    </div>
+
+    <div class="slide-indicators">
+        @for (int i = 0; i < 4; i++)
+        {
+            int idx = i;
+            <div class="indicator @(_currentSlide == idx ? "active" : "")" @onclick="() => GoToSlide(idx)"></div>
+        }
+    </div>
+
+    <div class="slide-counter">0@(_currentSlide + 1) / 04</div>
+
+    <div class="scroll-indicator">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+    <div class="two-col">
+        <div class="about-img reveal">
+            <img src="https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=800&q=80" alt="Sayar Marin Workshop" />
+        </div>
+        <div class="reveal">
+            <div class="gold-divider"></div>
+            <p class="section-eyebrow">@(_lang == "en" ? "Our Story" : "Hikayemiz")</p>
+            <h2 class="section-title">
+                @if (_lang == "en")
+                {
+                    <span>Where <em>Precision</em><br>Meets Passion</span>
+                }
+                else
+                {
+                    <span><em>Hassasiyet</em> ile<br>Tutkun Buluşması</span>
+                }
+            </h2>
+            @if (_lang == "en")
+            {
+                <p class="section-text">Sayar Marin is a premium yacht painting and repair service based in the heart of Marmaris, Turkey. We combine maritime expertise with meticulous attention to detail to deliver world-class results for discerning yacht owners across the Mediterranean.</p>
+                <p class="section-text">From minor touch-ups to complete hull restoration, every vessel is treated with the respect and craftsmanship it deserves. Your yacht is not just a boat — it is a statement of excellence.</p>
+            }
+            else
+            {
+                <p class="section-text">Sayar Marin, Türkiye'nin kalbi Marmaris'te konuşlanan premium bir yat boya ve onarım hizmetidir. Denizcilik uzmanlığımızı titiz detay anlayışımızla birleştirerek Akdeniz'in seçkin yat sahiplerine dünya standartlarında sonuçlar sunuyoruz.</p>
+                <p class="section-text">Küçük dokunuşlardan tam gövde restorasyonuna kadar her tekneye hak ettiği saygı ve ustalıkla yaklaşıyoruz. Yatınız sadece bir tekne değil — mükemmeliyetin bir ifadesidir.</p>
+            }
+            <div class="stats-row">
+                <div>
+                    <div class="stat-number">150+</div>
+                    <div class="stat-label">@(_lang == "en" ? "Yachts Restored" : "Restore Edilen Yat")</div>
+                </div>
+                <div>
+                    <div class="stat-number">5+</div>
+                    <div class="stat-label">@(_lang == "en" ? "Years Experience" : "Yıl Tecrübe")</div>
+                </div>
+                <div>
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">@(_lang == "en" ? "Satisfaction" : "Memnuniyet")</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section-full" id="services">
+    <div class="section-inner">
+        <div style="text-align:center; margin-bottom:1rem;" class="reveal">
+            <p class="section-eyebrow">@(_lang == "en" ? "What We Do" : "Ne Yapıyoruz")</p>
+            <h2 class="section-title">Premium <em>@(_lang == "en" ? "Services" : "Hizmetler")</em></h2>
+        </div>
+        <div class="services-grid">
+            @foreach (var service in GetServices())
+            {
+                <div class="service-card reveal">
+                    <div class="service-num">@service.Number</div>
+                    <div class="service-name">@service.Name</div>
+                    <p class="service-desc">@service.Desc</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- GALLERY -->
+<section class="section" id="gallery">
+    <div class="reveal" style="text-align:center; margin-bottom:1rem;">
+        <p class="section-eyebrow">@(_lang == "en" ? "Our Work" : "Çalışmalarımız")</p>
+        <h2 class="section-title"><em>@(_lang == "en" ? "Crafted with Pride" : "Gururla Yapılmış")</em></h2>
+    </div>
+    <div class="gallery-grid reveal">
+        <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=800&q=80" alt="Yacht" />
+        </div>
+        <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1605281317010-fe5ffe798166?w=600&q=80" alt="Yacht Detail" />
+        </div>
+        <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80" alt="Marina" />
+        </div>
+        <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=600&q=80" alt="Luxury Yacht" />
+        </div>
+        <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80" alt="Marmaris" />
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+    <div class="two-col">
+        <div class="reveal">
+            <div class="gold-divider"></div>
+            <p class="section-eyebrow">@(_lang == "en" ? "Find Us" : "Bizi Bulun")</p>
+            <h2 class="section-title">
+                @if (_lang == "en")
+                {
+                    <span>Based in <em>Marmaris</em></span>
+                }
+                else
+                {
+                    <span><em>Marmaris</em>'te Hizmetinizdeyiz</span>
+                }
+            </h2>
+            <p class="section-text">
+                @(_lang == "en"
+                    ? "Located in the beautiful marina of Marmaris, one of Turkey's premier yachting destinations. We proudly serve the entire Turkish Riviera and Mediterranean."
+                    : "Türkiye'nin premier yat destinasyonlarından biri olan Marmaris'in güzel marinasında yer almaktayız. Tüm Türk Rivierası ve Akdeniz'e hizmet veriyoruz.")
+            </p>
+            <ul class="contact-list">
+                <li>
+                    <span class="contact-icon">👤</span>
+                    <div>
+                        <span class="contact-label">@(_lang == "en" ? "Owner & Founder" : "Şirket Sahibi & Kurucu")</span>
+                        Burak Sayar
+                    </div>
+                </li>
+                <li>
+                    <span class="contact-icon">📱</span>
+                    <div>
+                        <span class="contact-label">@(_lang == "en" ? "Direct Contact" : "Doğrudan İletişim")</span>
+                        <a href="tel:+905300724380" style="color:var(--gold-light); text-decoration:none;">+90 530 072 43 80</a>
+                    </div>
+                </li>
+                <li>
+                    <span class="contact-icon">📍</span>
+                    <div>
+                        <span class="contact-label">@(_lang == "en" ? "Location" : "Konum")</span>
+                        Marmaris Marina, Muğla, Turkey
+                    </div>
+                </li>
+                <li>
+                    <span class="contact-icon">✉️</span>
+                    <div>
+                        <span class="contact-label">@(_lang == "en" ? "Email" : "E-posta")</span>
+                        info@sayarmarin.com
+                    </div>
+                </li>
+                <li>
+                    <span class="contact-icon">🕐</span>
+                    <div>
+                        <span class="contact-label">@(_lang == "en" ? "Working Hours" : "Çalışma Saatleri")</span>
+                        @(_lang == "en" ? "Monday – Saturday: 08:00 – 18:00" : "Pazartesi – Cumartesi: 08:00 – 18:00")
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="reveal" style="height:450px; background:var(--navy-mid); border:1px solid rgba(201,168,76,0.2); overflow:hidden;">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3194.4!2d28.2721!3d36.8519!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14be8b1b1b1b1b1b%3A0x1b1b1b1b1b1b1b1b!2sMarmaris!5e0!3m2!1sen!2str!4v1234567890"
+                width="100%" height="100%" style="border:0; filter:invert(90%) hue-rotate(180deg) saturate(0.4);"
+                allowfullscreen loading="lazy">
+            </iframe>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="gold-divider" style="margin:0 auto 2rem;"></div>
+    <h2 class="cta-title reveal">
+        @if (_lang == "en")
+        {
+            <span>Ready to <em>Transform</em><br>Your Yacht?</span>
+        }
+        else
+        {
+            <span>Yatınızı <em>Dönüştürmeye</em><br>Hazır mısınız?</span>
+        }
+    </h2>
+    <p class="cta-text reveal">
+        @(_lang == "en"
+            ? "Contact us today for a free consultation and detailed quote. We'll assess your vessel and deliver exceptional results."
+            : "Ücretsiz danışma ve detaylı fiyat teklifi için bugün bizimle iletişime geçin.")
+    </p>
+    <div class="cta-buttons reveal">
+        <a href="tel:+905300724380" class="btn-primary">@(_lang == "en" ? "Call Now" : "Hemen Ara")</a>
+        <a href="mailto:info@sayarmarin.com" class="btn-secondary">@(_lang == "en" ? "Send Email" : "E-posta Gönder")</a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-logo-text">SAYAR <span>MARİN</span></div>
+    <p class="footer-copy">© 2026 Sayar Marin. @(_lang == "en" ? "All rights reserved." : "Tüm hakları saklıdır.") Marmaris, Turkey.</p>
+    <div class="footer-links">
+        <a href="#about">@(_lang == "en" ? "About" : "Hakkımızda")</a>
+        <a href="#services">@(_lang == "en" ? "Services" : "Hizmetler")</a>
+        <a href="#contact">@(_lang == "en" ? "Contact" : "İletişim")</a>
+    </div>
+</footer>
+
+@code {
+    private string _lang = "en";
+    private int _currentSlide = 0;
+    private System.Timers.Timer? _slideTimer;
+
+    protected override void OnInitialized()
+    {
+        _slideTimer = new System.Timers.Timer(5000);
+        _slideTimer.Elapsed += (s, e) =>
+        {
+            _currentSlide = (_currentSlide + 1) % 4;
+            InvokeAsync(StateHasChanged);
+        };
+        _slideTimer.Start();
+    }
+
+    private void SetLang(string lang) => _lang = lang;
+    private void NextSlide() => _currentSlide = (_currentSlide + 1) % 4;
+    private void PrevSlide() => _currentSlide = (_currentSlide + 3) % 4;
+    private void GoToSlide(int idx) => _currentSlide = idx;
+
+    private async Task ScrollToContact()
+    {
+        await JS.InvokeVoidAsync("eval", "document.querySelector('#contact').scrollIntoView({behavior:'smooth'})");
+    }
+
+    private List<ServiceItem> GetServices() => _lang == "en" ? new()
+    {
+        new("01", "Hull Painting", "Complete hull preparation and painting using premium marine-grade paints. Anti-fouling treatments for optimal performance."),
+        new("02", "Superstructure Painting", "Flawless topside finishes that restore beauty and protect against harsh Mediterranean elements."),
+        new("03", "Structural Repairs", "Expert fiberglass and gelcoat repairs. From minor osmosis treatment to major structural restoration."),
+        new("04", "Teak Deck Work", "Traditional and synthetic teak deck installation, repair, and refinishing to showroom condition."),
+        new("05", "Osmosis Treatment", "Professional diagnosis and treatment. Complete hull drying and premium barrier coating application."),
+        new("06", "Detailing & Polishing", "Full exterior detailing, oxidation removal, and multi-stage machine polishing for a mirror finish."),
+    } : new()
+    {
+        new("01", "Gövde Boyama", "Premium deniz boyaları ile tam gövde hazırlığı ve boyama. Optimum performans için anti-fouling işlemleri."),
+        new("02", "Üst Yapı Boyama", "Yatınızın güzelliğini yenileyen ve Akdeniz elementlerine karşı koruyan kusursuz kaplama."),
+        new("03", "Yapısal Onarımlar", "Uzman fiberglas ve gelcoat onarımları. Küçük osmoz tedavisinden büyük yapısal restorasyona kadar."),
+        new("04", "Tik Güverte İşleri", "Geleneksel ve sentetik tik güverte montajı, onarımı ve showroom durumuna yenilenmesi."),
+        new("05", "Osmoz Tedavisi", "Profesyonel teşhis ve tedavi. Tam gövde kurutma ve premium bariyer kaplama uygulaması."),
+        new("06", "Detaylı Cila", "Tam dış temizlik, oksidasyon giderme ve ayna parlaklığı için çok aşamalı makine cilası."),
+    };
+
+    record ServiceItem(string Number, string Name, string Desc);
+
+    public void Dispose() => _slideTimer?.Dispose();
+}
